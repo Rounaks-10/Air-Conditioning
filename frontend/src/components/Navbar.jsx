@@ -9,14 +9,25 @@ import { AppContext } from "../context/appContext";
 const Navbar = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
   const { navigate, token, setToken } = useContext(AppContext);
+  const [open, setOpen] = useState(false);
 
   const logout = () => {
     navigate("/login");
     localStorage.removeItem("token");
     setToken("");
   };
+  useEffect(() => {
+  const handleClickOutside = (e) => {
+    if (!e.target.closest(".profile-menu")) {
+      setOpen(false);
+    }
+  };
+
+  document.addEventListener("click", handleClickOutside);
+  return () => document.removeEventListener("click", handleClickOutside);
+}, []);
   return (
-    <div className="relative">
+    <div className="relative profile-menu">
       {/* Navbar */}
       <div className="flex items-center justify-between px-10 py-5 bg-white shadow">
         <div className="md:hidden">
@@ -80,17 +91,28 @@ const Navbar = () => {
         </ul>
         <div className="flex items-center gap-6">
           {/* <img src={searchIcon} className="w-5 cursor-pointer" alt="search" /> */}
-          <img className="w-7 h-7" onClick={() => navigate("/wishlist")} src="/heart.png" alt=""/>
-          <div className="group relative">
+          <img
+            className="w-7 h-7"
+            onClick={() => navigate("/wishlist")}
+            src="/heart.png"
+            alt=""
+          />
+          <div className=" relative">
             <img
-              onClick={() => (token ? null : navigate("/login"))}
+              onClick={() => {
+                if (!token) {
+                  navigate("/login");
+                } else {
+                  setOpen(!open);
+                }
+              }}
               className="w-5 cursor-pointer"
               src={Profile}
               alt=""
             />
 
-            {token && (
-              <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4 z-10">
+            {token && open && (
+              <div className="absolute right-0 mt-2 z-10">
                 <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded ">
                   <p className="cursor-pointer hover:text-black">My Profile</p>
                   <p
