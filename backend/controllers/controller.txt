@@ -1,0 +1,43 @@
+const listProduct = async (req, res) => {
+  try {
+    let filter = {};
+
+    // 🔥 FIX: convert category name → id
+    if (req.query.category) {
+      const categoryDoc = await categoryModel.findOne({
+        name: req.query.category,
+      });
+
+      if (categoryDoc) {
+        filter.category = categoryDoc._id;
+      }
+    }
+
+    // brand fix (same logic if needed)
+    if (req.query.brand) {
+      const brandDoc = await brandModel.findOne({
+        name: req.query.brand,
+      });
+
+      if (brandDoc) {
+        filter.brand = brandDoc._id;
+      }
+    }
+
+    const products = await productModel
+      .find(filter)
+      .populate("brand")
+      .populate("category");
+
+    res.json({
+      success: true,
+      products,
+    });
+  } catch (error) {
+    console.log(error); // 👈 IMPORTANT
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
