@@ -221,7 +221,7 @@ const ProductGrid = ({ category, title }) => {
                 src={p.images?.[0]}
                 alt={p.name}
                 className="w-full h-36 object-cover rounded cursor-pointer"
-                onClick={() => window.open(`/product/${p._id}`, "_blank")}
+                onClick={() => navigate(`/product/${p._id}`)}
               />
 
               {/* Info */}
