@@ -19,6 +19,7 @@ app.use(cors({
     origin: [process.env.FRONTEND_URL, process.env.ADMIN_URL]
 }))
 
+
 //API endpoint
 app.use('/api/user',userRouter);
 app.use('/api/product',productRouter)
