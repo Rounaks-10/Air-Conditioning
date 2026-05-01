@@ -235,7 +235,7 @@ const ProductGrid = ({ category, title }) => {
               {/* Buttons */}
               <div className="flex gap-2 mt-4">
                 <button
-                  onClick={() => window.open(`/product/${p._id}`, "_blank")}
+                  onClick={() => navigate(`/product/${p._id}`)}
                   className="flex-1 border px-2 py-1 text-sm rounded hover:bg-gray-100"
                 >
                   View More

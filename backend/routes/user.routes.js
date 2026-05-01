@@ -4,7 +4,7 @@ import {loginUser,signUser,verifyUser,adminLogin} from '../controllers/user.cont
 const userRouter =express.Router()
 
 userRouter.post('/register',signUser)
-userRouter.post("/verify", verifyUser);
+userRouter.post('/verify', verifyUser);
 userRouter.post('/login',loginUser)
 userRouter.post('/admin',adminLogin)
 

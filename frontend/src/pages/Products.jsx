@@ -47,7 +47,7 @@ const Products = () => {
           src={p.images?.[0]}
           alt={p.name}
           className="w-full h-48 object-cover cursor-pointer transform group-hover:scale-105 transition duration-300"
-          onClick={() => window.open(`/product/${p._id}`, "_blank")}
+          onClick={() => navigate(`/product/${p._id}`)}
         />
 
         {/* NEW BADGE */}
