@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { backendUrl } from "../App";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { MapPin } from "lucide-react";
 
 const PlaceOrder = () => {
   const navigate = useNavigate();
@@ -30,109 +31,159 @@ const PlaceOrder = () => {
     setFormData((data) => ({ ...data, [name]: value }));
   };
 
-  
-
   const onSubmitHandler = async (event) => {
-  event.preventDefault();
+    event.preventDefault();
 
-  try {
-    const token = localStorage.getItem("token");
+    try {
+      const token = localStorage.getItem("token");
 
-    if (!token) {
-      toast.error("Please login first");
-      return;
-    }
-
-    const orderItems = cartProductList.map((item) => ({
-      productId: item._id,
-      name: item.name,
-      price: item.price,
-      quantity: cartItems[item._id],
-      image: item.images?.[0],
-    }));
-
-    // 🔥 COD FLOW
-    if (paymentMethod === "COD") {
-      const res = await axios.post(
-        `${backendUrl}/api/order/place`,
-        {
-          items: orderItems,
-          amount: total,
-          address: formData,
-        },
-        {
-          headers: { Authorization: token },
-        }
-      );
-
-      if (res.data.success) {
-        toast.success("Order placed successfully");
-        navigate("/orders");
-      } else {
-        toast.error(res.data.message);
+      if (!token) {
+        toast.error("Please login first");
+        return;
       }
-    }
 
-    // 🔥 RAZORPAY FLOW
-    else if (paymentMethod === "Razorpay") {
-      const res = await axios.post(
-        `${backendUrl}/api/order/razorpay`,
-        {
-          items: orderItems,
-          amount: total,
-          address: formData,
-        },
-        {
-          headers: { Authorization: token },
+      const orderItems = cartProductList.map((item) => ({
+        productId: item._id,
+        name: item.name,
+        price: item.price,
+        quantity: cartItems[item._id],
+        image: item.images?.[0],
+      }));
+
+      // 🔥 COD FLOW
+      if (paymentMethod === "COD") {
+        const res = await axios.post(
+          `${backendUrl}/api/order/place`,
+          {
+            items: orderItems,
+            amount: total,
+            address: formData,
+          },
+          {
+            headers: { Authorization: token },
+          },
+        );
+
+        if (res.data.success) {
+          toast.success("Order placed successfully");
+          navigate("/orders");
+        } else {
+          toast.error(res.data.message);
         }
-      );
+      }
 
-      const order = res.data.order;
+      // 🔥 RAZORPAY FLOW
+      else if (paymentMethod === "Razorpay") {
+        const res = await axios.post(
+          `${backendUrl}/api/order/razorpay`,
+          {
+            items: orderItems,
+            amount: total,
+            address: formData,
+          },
+          {
+            headers: { Authorization: token },
+          },
+        );
 
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // 🔥 replace with env
-        amount: order.amount,
-        currency: "INR",
-        name: "Your Store",
-        description: "Order Payment",
-        order_id: order.id,
+        const order = res.data.order;
 
-        handler: async function (response) {
-          console.log(response)
-          const verifyRes = await axios.post(
-            `${backendUrl}/api/order/verifyRazorpay`,
-            response,
-            {
-              headers: { Authorization: token },
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID, // 🔥 replace with env
+          amount: order.amount,
+          currency: "INR",
+          name: "Your Store",
+          description: "Order Payment",
+          order_id: order.id,
+
+          handler: async function (response) {
+            console.log(response);
+            const verifyRes = await axios.post(
+              `${backendUrl}/api/order/verifyRazorpay`,
+              response,
+              {
+                headers: { Authorization: token },
+              },
+            );
+
+            if (verifyRes.data.success) {
+              toast.success("Payment Successful");
+              navigate("/orders");
+            } else {
+              toast.error("Payment Failed");
             }
-          );
+          },
 
-          if (verifyRes.data.success) {
-            toast.success("Payment Successful");
-            navigate("/orders");
-          } else {
-            toast.error("Payment Failed");
-          }
-        },
+          theme: {
+            color: "#005AAA",
+          },
+        };
 
-        theme: {
-          color: "#005AAA",
-        },
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
     }
-  } catch (error) {
-    console.log(error);
-    toast.error(error.message);
-  }
-};
+  };
   const cartProductList = products.filter((p) => cartItems[p._id]);
   const total = cartProductList.reduce(
     (sum, item) => sum + item.price * cartItems[item._id],
     0,
   );
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        email: user.email || "",
+      }));
+    }
+  }, []);
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation not supported");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          const res = await axios.get(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
+          );
+
+          const address = res.data.address;
+
+          setFormData((prev) => ({
+            ...prev,
+            street: res.data.display_name || "",
+
+            city: address.city || address.town || address.village || "",
+
+            state: address.state || "",
+
+            pincode: address.postcode || "",
+
+            country: address.country || "",
+          }));
+
+          toast.success("Location fetched");
+        } catch (err) {
+          console.log(err);
+          toast.error("Failed to fetch address");
+        }
+      },
+      (error) => {
+        console.log(error);
+        toast.error("Location permission denied");
+      },
+    );
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen py-10 px-4 md:px-10">
@@ -170,9 +221,9 @@ const PlaceOrder = () => {
                 name="email"
                 value={formData.email}
                 placeholder="Email"
-                onChange={handleChange}
                 type="email"
-                className="border p-3 rounded md:col-span-2"
+                readOnly
+                className="border p-3 rounded md:col-span-2 bg-gray-100 text-gray-600 cursor-not-allowed"
               />
               <input
                 required
@@ -180,8 +231,27 @@ const PlaceOrder = () => {
                 value={formData.phone}
                 placeholder="Phone"
                 onChange={handleChange}
-                type="number"
+                type="tel"
                 className="border p-3 rounded"
+              />
+              <button
+                type="button"
+                onClick={getCurrentLocation}
+                className="flex items-center justify-center gap-2 bg-[#005AAA] hover:bg-[#004080] text-white px-5 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 font-medium text-sm w-fit"
+              >
+                <MapPin size={18} />
+
+                <span>Use Current Location</span>
+              </button>
+
+              <input
+                required
+                name="street"
+                value={formData.street}
+                placeholder="Street Address"
+                onChange={handleChange}
+                type="text"
+                className="border p-3 rounded md:col-span-2"
               />
               <input
                 required
@@ -263,7 +333,7 @@ const PlaceOrder = () => {
                 <span>
                   {item.name} x {cartItems[item._id]}
                 </span>
-                <span>₹{item.price * cartItems[item._id]}</span>
+                <span>₹{Number(item.price * cartItems[item._id]).toLocaleString("en-IN")}</span>
               </div>
             ))}
           </div>

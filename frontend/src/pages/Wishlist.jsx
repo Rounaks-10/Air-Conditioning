@@ -74,7 +74,7 @@ const Wishlist = () => {
 
               <p className="text-gray-500 text-xs">{p.brand?.name}</p>
 
-              <p className="font-bold mt-1">₹{p.price}</p>
+              <p className="font-bold mt-1"> ₹{Number(p.price).toLocaleString("en-IN")}</p>
 
               <div className="flex gap-2 mt-3">
                 {/* Add to Cart */}

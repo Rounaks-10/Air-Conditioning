@@ -60,12 +60,12 @@ const ProductGrid = ({ category, title }) => {
       setLoading(true);
 
       const query = new URLSearchParams(searchParams.toString());
-
       // 🔥 ensure category always applied
       if (!query.get("category")) {
         query.set("category", category);
       }
-
+      
+      console.log(query.toString());
       const res = await axios.get(
         `${backendUrl}/api/product/list?${query.toString()}`,
       );
@@ -229,7 +229,7 @@ const ProductGrid = ({ category, title }) => {
                 <h3 className="font-semibold text-sm line-clamp-2">{p.name}</h3>
                 <p className="text-xs text-gray-500">{p.brand?.name}</p>
                 <p className="text-xs text-gray-500">{p.category?.name}</p>
-                <p className="font-bold mt-1 text-lg">₹{p.price}</p>
+                <p className="font-bold mt-1 text-lg"> ₹{Number(p.price).toLocaleString("en-IN")}</p>
               </div>
 
               {/* Buttons */}

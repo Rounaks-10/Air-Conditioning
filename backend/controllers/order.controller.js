@@ -1,5 +1,6 @@
 import orderModel from "../models/orders.model.js";
-import userModel from "../models/user.model.js"
+import userModel from "../models/user.model.js";
+import { sendOrderConfirmationEmail } from "../utils/sendEmail.js";
 import razorpay from 'razorpay'
 import crypto from "crypto";
 
@@ -11,6 +12,7 @@ const razorpayInstance=new razorpay({
 const placeOrder = async (req, res) => {
   try {
     const userId = req.userId;
+    const user = await userModel.findById(userId);
     const { items, amount, address } = req.body;
     const orderData = {
       userId,
@@ -25,6 +27,20 @@ const placeOrder = async (req, res) => {
     await newOrder.save();
 
     await userModel.findByIdAndUpdate(userId, { cartData: {} });
+    const emailItems = items.map((item) => ({
+      name: item.name,
+      quantity: item.quantity,
+      price: item.price,
+    }));
+
+    // 🔥 Send order confirmation email
+    await sendOrderConfirmationEmail(
+      user,
+      emailItems,
+      amount,
+      address,
+    );
+
     res.json({ success: true, message: "Order Placed" });
   } catch (error) {
     console.log(error);

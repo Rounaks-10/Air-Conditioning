@@ -24,10 +24,12 @@ const Login = () => {
     try {
       // ✅ SIGNUP
       if (currentState === "Sign Up") {
-        const res = await axios.post(
-          backendUrl + "/api/user/register",
-          { name, email, password, phone }
-        );
+        const res = await axios.post(backendUrl + "/api/user/register", {
+          name,
+          email,
+          password,
+          phone,
+        });
 
         if (res.data.success) {
           toast.success("OTP sent to your email");
@@ -41,14 +43,15 @@ const Login = () => {
 
       // ✅ LOGIN
       else if (currentState === "Login") {
-        const res = await axios.post(
-          backendUrl + "/api/user/login",
-          { email, password }
-        );
+        const res = await axios.post(backendUrl + "/api/user/login", {
+          email,
+          password,
+        });
 
         if (res.data.success) {
           setToken(res.data.token);
           localStorage.setItem("token", res.data.token);
+          localStorage.setItem("user", JSON.stringify(res.data.user));
           toast.success("Login successful");
         } else {
           toast.error(res.data.message);
@@ -57,20 +60,20 @@ const Login = () => {
 
       // ✅ VERIFY OTP
       else if (currentState === "Verify") {
-        const res = await axios.post(
-          backendUrl + "/api/user/verify",
-          { userId, emailOtp: otp }
-        );
-
+        const res = await axios.post(backendUrl + "/api/user/verify", {
+          userId,
+          emailOtp: otp,
+        });
+        
         if (res.data.success) {
           setToken(res.data.token);
           localStorage.setItem("token", res.data.token);
+          localStorage.setItem("user", JSON.stringify(res.data.user));
           toast.success("Account verified ");
         } else {
           toast.error(res.data.message);
         }
       }
-
     } catch (error) {
       console.log(error);
       toast.error(error.message);
@@ -88,9 +91,7 @@ const Login = () => {
       onSubmit={onSubmitHandler}
       className="flex flex-col items-center w-[90%] sm:max-w-96 m-auto mt-14 gap-4 p-6 bg-white shadow-lg rounded-xl"
     >
-      <h2 className="text-xl font-semibold text-[#005AAA]">
-        {currentState}
-      </h2>
+      <h2 className="text-xl font-semibold text-[#005AAA]">{currentState}</h2>
 
       {/* SIGN UP */}
       {currentState === "Sign Up" && (
@@ -163,14 +164,17 @@ const Login = () => {
             </p>
           ) : (
             <div>
-               <p className="text-red-500 text-xs mt-1"> Note: Make sure you remember your password and store it securely</p>
-            <p
-              onClick={() => setCurrentState("Login")}
-              className="cursor-pointer text-blue-600"
-            >
-              Login Here
-            </p>
-          </div>
+              <p className="text-red-500 text-xs mt-1">
+                {" "}
+                Note: Make sure you remember your password and store it securely
+              </p>
+              <p
+                onClick={() => setCurrentState("Login")}
+                className="cursor-pointer text-blue-600"
+              >
+                Login Here
+              </p>
+            </div>
           )}
         </div>
       )}

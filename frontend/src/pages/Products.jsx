@@ -35,7 +35,7 @@ const Products = () => {
 
   const ProductCard = ({ p }) => {
   const discountPercent = p.discountPrice
-    ? Math.round(((p.price - p.discountPrice) / p.price) * 100)
+    ? Math.round(((p.discountPrice) / p.price) * 100)
     : 0;
 
   return (
@@ -80,12 +80,12 @@ const Products = () => {
         {/* PRICE */}
         <div className="mt-3 flex items-center gap-2">
           <span className="text-lg font-bold text-[#005AAA]">
-            ₹{p.discountPrice || p.price}
+             ₹{Number(p.price - p.discountPrice).toLocaleString("en-IN")}
           </span>
 
           {p.discountPrice && (
             <span className="text-sm text-gray-400 line-through">
-              ₹{p.price}
+               ₹{Number(p.price).toLocaleString("en-IN")}
             </span>
           )}
         </div>
@@ -93,7 +93,7 @@ const Products = () => {
         {/* SAVE TEXT */}
         {p.discountPrice && (
           <p className="text-xs text-green-600 mt-1 font-medium">
-            You save ₹{p.price - p.discountPrice}
+            You save ₹{Number(p.discountPrice).toLocaleString("en-IN")}
           </p>
         )}
       </div>

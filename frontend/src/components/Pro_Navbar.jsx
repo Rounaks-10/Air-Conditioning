@@ -190,17 +190,17 @@ const Pro_Navbar = () => {
           <div className="max-w-7xl mx-auto flex gap-20 p-10">
             {/* Column 1 */}
            <div className="w-56  flex flex-col gap-10" ref={(el) => (colsRef1.current[0] = el)}>
-              <NavLink to="/products/">
+              <NavLink to="/products/desert-air-coolers">
               <p className=" nav-link text-[#005AAA] hover:text-blue-500 cursor-pointer">
                Desert Air coolers
               </p>
               </NavLink>
-              <NavLink to="/products/">
+              <NavLink to="/products/window-air-coolers">
               <p className="nav-link text-[#005AAA] hover:text-blue-500 cursor-pointer">
                 Window Air Coolers
               </p>
               </NavLink>
-              <NavLink to="/products/">
+              <NavLink to="/products/personal-air-coolers">
               <p className="nav-link text-[#005AAA] hover:text-blue-500 cursor-pointer">
                 Personal Air Coolers
               </p>
@@ -237,19 +237,19 @@ const Pro_Navbar = () => {
           <div className="max-w-7xl mx-auto flex gap-20 p-10">
             {/* Column 1 */}
             <div className="w-56  flex flex-col gap-10" ref={(el) => (colsRef2.current[0] = el)}>
-              <NavLink to="/products/">
+              <NavLink to="/products/deep-freezers">
               <p className=" nav-link text-[#005AAA] hover:text-blue-500 cursor-pointer">
                Deep Freezers
               </p>
               </NavLink>
-              <NavLink to="/products/">
+              <NavLink to="/products/visi-freezers">
               <p className="nav-link text-[#005AAA] hover:text-blue-500 cursor-pointer">
                 Visi Coolers
               </p>
               </NavLink>
-              <NavLink to="/products/">
+              <NavLink to="/products/refrigerators">
               <p className="nav-link text-[#005AAA] hover:text-blue-500 cursor-pointer">
-                Mini Bar
+                Refrigerators
               </p>
               </NavLink>
             </div>

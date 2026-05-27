@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { backendUrl } from "../App";
 import { Wrench, Settings, RefreshCcw, Flame } from "lucide-react";
 
 const services = [
@@ -27,6 +30,7 @@ const services = [
 const Service = () => {
   const [form, setForm] = useState({
     name: "",
+    email:"",
     phone: "",
     service: "",
   });
@@ -35,9 +39,31 @@ const Service = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     console.log(form); // later connect to backend
+    try {
+  const res = await axios.post(
+    `${backendUrl}/api/service/book`,
+    form
+  );
+
+  if (res.data.success) {
+    toast.success("Service booked successfully");
+
+    setForm({
+      name: "",
+      email: "",
+      phone: "",
+      service: "",
+    });
+  } else {
+    toast.error(res.data.message);
+  }
+} catch (error) {
+  console.log(error);
+  toast.error("Something went wrong");
+}
   };
 
   return (
@@ -92,6 +118,15 @@ const Service = () => {
               className="border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-300"
               required
             />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={handleChange}
+              className="border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-300"
+              required
+            />
 
             <input
               type="tel"
@@ -114,6 +149,7 @@ const Service = () => {
               <option>Installation</option>
               <option>Repair</option>
               <option>AMC</option>
+              <option>Consultation</option>
               <option>Gas Refill</option>
             </select>
 
