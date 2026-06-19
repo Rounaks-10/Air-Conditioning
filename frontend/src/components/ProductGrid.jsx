@@ -4,7 +4,7 @@ import FilterSidebar from "./FilterSidebar";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { backendUrl } from "../App";
 import { toast } from "react-toastify";
-import ACLoader from "./ACLoader";
+import ACLoader from "./ACloader";
 
 const ProductGrid = ({ category, title }) => {
   const [searchParams] = useSearchParams();
