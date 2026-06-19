@@ -4,6 +4,7 @@ import FilterSidebar from "./FilterSidebar";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { backendUrl } from "../App";
 import { toast } from "react-toastify";
+import ACLoader from "./ACLoader";
 
 const ProductGrid = ({ category, title }) => {
   const [searchParams] = useSearchParams();
@@ -180,7 +181,7 @@ const ProductGrid = ({ category, title }) => {
       />
       <h2 className="text-2xl font-semibold mb-6 text-center">{title}</h2>
 
-      {loading && <p className="text-center">Loading...</p>}
+      {loading && <ACLoader/>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map((p) => {

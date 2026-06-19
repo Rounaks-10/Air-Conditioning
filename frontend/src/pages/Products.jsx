@@ -3,6 +3,7 @@ import axios from "axios";
 import { backendUrl } from "../App";
 import Pro_Navbar from "../components/Pro_Navbar";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import ACLoader from "../components/ACloader";
 
 const Products = () => {
   const [newProducts, setNewProducts] = useState([]);
@@ -109,7 +110,7 @@ const Products = () => {
       {location.pathname === "/products" && (
         <div className="max-w-7xl mx-auto px-4 md:px-10 py-10 space-y-12">
           {loading ? (
-            <p className="text-center mt-10">Loading...</p>
+            <ACLoader/>
           ) : (
             <>
               {/* 🆕 NEW ARRIVALS */}

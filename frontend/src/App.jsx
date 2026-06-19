@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect,useState } from 'react'
 import { Routes,Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Products from './pages/Products'
@@ -17,14 +17,30 @@ import Compare from './pages/Compare'
 import { ToastContainer } from "react-toastify";
 import PlaceOrder from './pages/PlaceOrder'
 import Wishlist from './pages/Wishlist'
+import ChatBot from './components/ChatBot'
+import ACLoader from "./components/ACLoader";
 
 export const backendUrl = import.meta.env.VITE_BACKEND_URL
 
 const App = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2500); // loader duration
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <ACLoader />;
+  }
   return (
     <div className='max-w-full'>
       <Navbar/>
       <ToastContainer/>
+      <ChatBot/>
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/products' element={<Products/>}>
