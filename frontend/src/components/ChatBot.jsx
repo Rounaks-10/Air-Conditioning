@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
+import { backendUrl } from "../App";
 import { gsap } from "gsap";
 
 const ChatBot = () => {
@@ -59,7 +60,7 @@ const ChatBot = () => {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/chatbot/ask",
+        `${backendUrl}/api/chatbot/ask`,
         {
           message: query,
         },
