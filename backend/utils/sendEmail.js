@@ -211,7 +211,7 @@ const sendServiceBookingEmail = async (name, email, phone, service) => {
       font-weight: bold;
     ">
     Service Confirmation Required:
-    Please forward this email to the same email address from which you received it to confirm your booking and ensure service assurance. Your booking will be processed only after confirmation is received.
+    Please forward this email to the email address shraddhaengineering15@gmail.com from which you received it to confirm your booking and ensure service assurance. Your booking will be processed only after confirmation is received.
   </div>
 
   <p>
