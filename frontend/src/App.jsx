@@ -18,7 +18,7 @@ import { ToastContainer } from "react-toastify";
 import PlaceOrder from './pages/PlaceOrder'
 import Wishlist from './pages/Wishlist'
 import ChatBot from './components/ChatBot'
-import ACLoader from "./components/ACLoader";
+import ACLoader from "./components/ACloader";
 
 export const backendUrl = import.meta.env.VITE_BACKEND_URL
 
