@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { backendUrl } from "../App";
 import { useNavigate } from "react-router-dom";
+import ACLoader from "../components/ACloader";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState({});
@@ -72,7 +73,7 @@ const Cart = () => {
     0,
   );
 
-  if (loading) return <p className="text-center mt-10">Loading...</p>;
+  if (loading) return <ACLoader/>;
 
   return (
     <div className="bg-gray-50 min-h-screen py-10 px-4 md:px-10">

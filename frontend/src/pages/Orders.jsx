@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { backendUrl } from "../App";
 import { toast } from "react-toastify";
+import ACLoader from "../components/ACloader";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -51,7 +52,7 @@ const Orders = () => {
   };
 
   if (loading)
-    return <p className="text-center mt-20 text-gray-500">Loading...</p>;
+    return <ACLoader/>;
 
   return (
     <div className="bg-gray-50 min-h-screen py-10 px-4 md:px-10">

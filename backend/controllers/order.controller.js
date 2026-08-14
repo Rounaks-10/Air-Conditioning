@@ -117,7 +117,22 @@ const verifyRazorpay = async (req, res) => {
       await orderModel.findByIdAndUpdate(orderId, {
         payment: true
       });
+      const order = await orderModel.findById(orderId); 
+      const user = await userModel.findById(userId);
 
+      const emailItems = order.items.map((item) => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+      }));
+
+      // Send confirmation email
+      await sendOrderConfirmationEmail(
+        user,
+        emailItems,
+        order.amount,
+        order.address
+      );
       //  5. Clear user cart
       await userModel.findByIdAndUpdate(userId, {
         cartData: {},
