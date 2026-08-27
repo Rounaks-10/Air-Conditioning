@@ -43,49 +43,128 @@ const ChatBot = () => {
     });
   }, [messages]);
 
-  const sendMessage = async () => {
-    if (!message.trim()) return;
+  // const sendMessage = async () => {
+  //   if (!message.trim()) return;
 
-    const userMessage = {
-      role: "user",
-      content: message,
-    };
+  //   const userMessage = {
+  //     role: "user",
+  //     content: message,
+  //   };
 
-    setMessages((prev) => [...prev, userMessage]);
+  //   setMessages((prev) => [...prev, userMessage]);
 
-    const query = message;
+  //   const query = message;
 
-    setMessage("");
-    setLoading(true);
+  //   setMessage("");
+  //   setLoading(true);
 
-    try {
-      const { data } = await axios.post(
-        `${backendUrl}/api/chatbot/ask`,
-        {
-          message: query,
-        },
-      );
+  //   try {
+  //     const { data } = await axios.post(
+  //       `${backendUrl}/api/chatbot/ask`,
+  //       {
+  //         message: query,
+  //       },
+  //     );
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: data.answer,
-        },
-      ]);
-    } catch (error) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: "Sorry, I couldn't process your request.",
-        },
-      ]);
-    }
+  //     setMessages((prev) => [
+  //       ...prev,
+  //       {
+  //         role: "assistant",
+  //         content: data.answer,
+  //       },
+  //     ]);
+  //   } catch (error) {
+  //     setMessages((prev) => [
+  //       ...prev,
+  //       {
+  //         role: "assistant",
+  //         content: "Sorry, I couldn't process your request.",
+  //       },
+  //     ]);
+  //   }
 
-    setLoading(false);
+  //   setLoading(false);
+  // };
+const sendMessage = async () => {
+  if (!message.trim()) return;
+
+  const userMessage = {
+    role: "user",
+    content: message,
   };
 
+  setMessages((prev) => [...prev, userMessage]);
+
+  const query = message;
+
+  setMessage("");
+  setLoading(true);
+
+  try {
+    const token = localStorage.getItem("token");
+
+    console.log("Chat token exists:", !!token);
+    console.log("Chat token length:", token?.length);
+
+    if (!token) {
+      throw new Error("Authentication token not found");
+    }
+
+    const { data } = await axios.post(
+      `${backendUrl}/api/chatbot/ask`,
+      {
+        message: query,
+      },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    console.log("Chat response:", data);
+
+    if (!data.success) {
+      throw new Error(data.message || "Failed to get chatbot response");
+    }
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "assistant",
+        content:
+          data.answer || "I couldn't generate a response.",
+      },
+    ]);
+
+  } catch (error) {
+    console.error("Chat error:", error);
+    console.error("Status:", error.response?.status);
+    console.error("Server response:", error.response?.data);
+
+    let errorMessage = "Sorry, I couldn't process your request.";
+
+    if (error.message === "Authentication token not found") {
+      errorMessage = "Please log in to use the chatbot.";
+    } else if (error.response?.status === 401) {
+      errorMessage =
+        error.response?.data?.message ||
+        "Your session has expired. Please log in again.";
+    } else if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    }
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "assistant",
+        content: errorMessage,
+      },
+    ]);
+  } finally {
+    setLoading(false);
+  }
+};
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       sendMessage();

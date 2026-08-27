@@ -34,7 +34,7 @@ const sendEmailOTP = async (email, otp) => {
   }
 };
 
-const sendOrderConfirmationEmail = async (user, items, amount, address) => {
+const sendOrderConfirmationEmail = async (user, items, amount, address,orderId) => {
   try {
     const productsHtml = items
       .map(
@@ -82,7 +82,19 @@ const sendOrderConfirmationEmail = async (user, items, amount, address) => {
             <p>
               Your order has been placed successfully.
             </p>
+          <h3>Order ID</h3>
 
+          <p
+            style="
+              font-size:18px;
+              font-weight:bold;
+              background:#f5f5f5;
+              padding:12px;
+              border-radius:6px;
+            "
+          >
+            ${orderId}
+          </p>
             <h3>Order Details</h3>
 
             <table
